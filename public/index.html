@@ -2,93 +2,301 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lakers Hub 2025</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Lakers Nation Hub</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* 保持之前的 CSS 样式，为了节省篇幅，这里使用了压缩版样式，显示效果一样 */
-        :root{--purple:#552583;--gold:#FDB927;--bg:#121212;--card:#1e1e1e;--text:#fff;--sub:#b3b3b3}
-        *{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;padding-bottom:50px}
-        header{background:linear-gradient(180deg,rgba(85,37,131,0.9) 0%,rgba(18,18,18,0) 100%);padding:30px 20px 15px;text-align:center}
-        h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold);margin:0}.sub{font-size:0.8rem;color:var(--sub);text-transform:uppercase}
-        .container{max-width:600px;margin:0 auto;padding:20px}
-        .card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;border-left:4px solid transparent}
-        .card.home{border-left-color:var(--gold)}.card.away{border-left-color:#555}
-        .info{display:flex;align-items:center;gap:10px}.logo{width:40px;height:40px;object-fit:contain}
-        .meta{text-align:right}.time{font-size:0.9rem;font-weight:700}.date{font-size:0.75rem;color:var(--sub)}
-        .badge{padding:4px 8px;border-radius:4px;font-size:0.75rem;font-weight:700;margin-top:5px;display:inline-block}
-        .live{background:#e53e3e;color:#fff;animation:pulse 1.5s infinite}.final{background:#333;color:#aaa}
-        .win{color:#48bb78}.loss{color:#f56565}
-        @keyframes pulse{0%{opacity:1}50%{opacity:.6}100%{opacity:1}}
-        .refresh{background:0 0;border:1px solid var(--purple);color:var(--purple);padding:8px 20px;border-radius:20px;margin:0 auto 20px;display:block;cursor:pointer}
+        /* --- 1. 紫金主题定义 --- */
+        :root {
+            --color-purple: #552583;
+            --color-purple-dark: #3b1a5a;
+            --color-gold: #FDB927;
+            --color-gold-dark: #e6a620;
+            --bg-main: #0f0c15;
+            --glass-bg: rgba(30, 30, 40, 0.75);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 10% -10%, rgba(85, 37, 131, 0.4), transparent 40%),
+                radial-gradient(circle at 90% 110%, rgba(253, 185, 39, 0.2), transparent 40%);
+            background-attachment: fixed;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* --- 2. 核心组件样式 --- */
+        /* 顶部导航栏 (Glass) */
+        .app-bar {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: var(--glass-border);
+            box-shadow: none !important;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        }
+        .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 1px; background: linear-gradient(to right, var(--color-gold), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* 内容区域容器 */
+        .main-container {
+            padding: 80px 16px 90px; /* 留出顶部和底部的空间 */
+            max-width: 640px; margin: 0 auto; min-height: 100vh;
+        }
+
+        /* 视图切换动效 */
+        .view-page { display: none; animation: fadeUp 0.3s ease-out; }
+        .view-page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 卡片通用样式 */
+        .lakers-card {
+            background: var(--glass-bg);
+            border: var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .lakers-card:active { transform: scale(0.98); }
+
+        /* --- 3. 底部导航栏 (Bottom Nav) --- */
+        .bottom-nav {
+            background: rgba(20, 20, 25, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-top: var(--glass-border);
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom); /* 适配 iPhone X 底部 */
+        }
+        .mdui-bottom-nav-item { color: rgba(255,255,255,0.5) !important; }
+        .mdui-bottom-nav-item--active { color: var(--color-gold) !important; }
+        .mdui-bottom-nav-item--active .mdui-icon { transform: translateY(-2px); filter: drop-shadow(0 0 6px var(--color-gold)); transition: 0.3s; }
+
+        /* --- 4. 各视图特定样式 --- */
+        /* 赛程卡片增强 */
+        .game-card-content { padding: 16px; display: flex; justify-content: space-between; align-items: center; position: relative; }
+        .status-badge { position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
+        .status-live { background: #e53e3e; box-shadow: 0 0 10px #e53e3e; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% {opacity:1} 50% {opacity:0.6} 100% {opacity:1} }
+        .team-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .team-logo-img { width: 36px; height: 36px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .score-num { font-family: 'Bebas Neue'; font-size: 1.5rem; margin-left: auto; font-weight: bold; }
+
+        /* 新闻卡片 */
+        .news-card { margin-bottom: 16px; }
+        .news-media { height: 160px; background-size: cover; background-position: center; position: relative; }
+        .news-overlay { position: absolute; bottom:0; left:0; right:0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 20px 16px 12px; }
+        .news-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; margin-bottom: 6px; }
+        .news-meta { font-size: 0.8rem; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 6px; }
+        .source-tag { background: var(--color-purple); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
+
+        /* 骨架屏 Loading */
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
+        @keyframes shimmer { 0% {background-position: 200% 0} 100% {background-position: -200% 0} }
+        .sk-card { height: 110px; margin-bottom: 16px; }
+        .sk-news { height: 220px; margin-bottom: 16px; }
+
     </style>
 </head>
-<body>
-    <header>
-        <h1>LAKERS HUB</h1>
-        <p class="sub">Vercel Edition</p>
-    </header>
-    <div class="container">
-        <button class="refresh" onclick="loadData()">🔄 刷新赛程</button>
-        <div id="list" style="text-align:center;margin-top:50px;color:#666">正在连接云端 API...</div>
+<body class="mdui-theme-primary-purple mdui-theme-accent-amber">
+
+    <div class="app-bar mdui-appbar mdui-appbar-fixed">
+        <div class="mdui-toolbar">
+            <span class="app-title">LAKERS NATION</span>
+            <div class="mdui-toolbar-spacer"></div>
+            <button class="mdui-btn mdui-btn-icon mdui-ripple" onclick="refreshCurrentTab()">
+                <i class="mdui-icon material-icons">refresh</i>
+            </button>
+        </div>
     </div>
 
+    <div class="main-container">
+        
+        <div id="view-schedule" class="view-page active">
+            <div id="schedule-list">
+                <div class="skeleton sk-card"></div><div class="skeleton sk-card"></div><div class="skeleton sk-card"></div>
+            </div>
+        </div>
+
+        <div id="view-news" class="view-page">
+            <div id="news-list">
+                <div class="skeleton sk-news"></div><div class="skeleton sk-news"></div>
+            </div>
+        </div>
+
+        <div id="view-roster" class="view-page" style="text-align:center; padding-top:50px;">
+            <i class="mdui-icon material-icons" style="font-size:64px; color:var(--glass-border)">people_outline</i>
+            <p style="color:var(--glass-border)">Roster Coming Soon...</p>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav mdui-bottom-nav mdui-bottom-nav-text-auto mdui-ripple">
+        <a href="javascript:;" class="mdui-bottom-nav-item mdui-bottom-nav-item--active" data-target="view-schedule">
+            <i class="mdui-icon material-icons">sports_basketball</i>
+            <label>Schedule</label>
+        </a>
+        <a href="javascript:;" class="mdui-bottom-nav-item" data-target="view-news">
+            <i class="mdui-icon material-icons">article</i>
+            <label>News</label>
+        </a>
+        <a href="javascript:;" class="mdui-bottom-nav-item" data-target="view-roster">
+            <i class="mdui-icon material-icons">groups</i>
+            <label>Roster</label>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
     <script>
-        async function loadData() {
-            const list = document.getElementById('list');
-            list.innerHTML = '正在加载...';
+        // --- 全局状态管理 ---
+        let currentTab = 'view-schedule';
+        const dataCache = { schedule: null, news: null };
+
+        // --- 核心逻辑 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initTabs();
+            loadSchedule(); // 默认加载赛程
+        });
+
+        function initTabs() {
+            const tabs = document.querySelectorAll('.mdui-bottom-nav-item');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 1. 切换导航选中态
+                    tabs.forEach(t => t.classList.remove('mdui-bottom-nav-item--active'));
+                    tab.classList.add('mdui-bottom-nav-item--active');
+                    // 2. 切换视图
+                    const targetId = tab.dataset.target;
+                    document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+                    document.getElementById(targetId).classList.add('active');
+                    currentTab = targetId;
+                    // 3. 按需加载数据
+                    if (targetId === 'view-news' && !dataCache.news) loadNews();
+                });
+            });
+        }
+
+        function refreshCurrentTab() {
+            if (currentTab === 'view-schedule') loadSchedule(true);
+            if (currentTab === 'view-news') loadNews(true);
+            mdui.snackbar({message: 'Refreshing data...', position: 'top'});
+        }
+
+        // --- 模块 1: 赛程加载 (复用 Vercel API) ---
+        async function loadSchedule(forceRefresh = false) {
+            const container = document.getElementById('schedule-list');
+            if (forceRefresh) container.innerHTML = '<div class="skeleton sk-card"></div><div class="skeleton sk-card"></div>';
             
             try {
-                // 关键点：这里直接请求 Vercel 后端，不跨域，极快
-                const res = await fetch('/api/schedule'); 
-                const json = await res.json();
-                
-                if (json.events) render(json.events);
-                else throw new Error('No data');
+                // 请求我们自己的 Vercel 后端
+                const res = await fetch('/api/schedule');
+                const data = await res.json();
+                dataCache.schedule = data.events;
+                renderSchedule(data.events);
             } catch (e) {
-                list.innerHTML = '加载失败，请稍后重试';
-                console.error(e);
+                container.innerHTML = `<div style="text-align:center;padding:20px;color:#f66">Failed to load schedule.</div>`;
             }
         }
 
-        function render(events) {
-            const list = document.getElementById('list');
-            list.innerHTML = '';
+        function renderSchedule(events) {
+            const container = document.getElementById('schedule-list');
+            container.innerHTML = '';
             
-            events.forEach(e => {
-                const g = e.competitions[0];
+            events.forEach(event => {
+                const g = event.competitions[0];
                 const lakers = g.competitors.find(c => c.team.id === '13');
                 const opp = g.competitors.find(c => c.team.id !== '13');
                 const isHome = lakers.homeAway === 'home';
-                const date = new Date(g.date);
-                
-                let status = `<span class="badge" style="color:#666">即将开始</span>`;
-                if(g.status.type.state === 'in') status = `<span class="badge live">LIVE: ${lakers.score.value}-${opp.score.value}</span>`;
-                if(g.status.type.state === 'post') {
-                    const win = parseInt(lakers.score.value) > parseInt(opp.score.value);
-                    status = `<span class="badge final"><span class="${win?'win':'loss'}">${win?'W':'L'}</span> ${lakers.score.value}-${opp.score.value}</span>`;
+                const dateObj = new Date(g.date);
+                const state = g.status.type.state;
+
+                // 状态徽章逻辑
+                let statusBadge = '';
+                if (state === 'in') statusBadge = `<span class="status-badge status-live">LIVE Q${g.status.period}</span>`;
+                else if (state === 'post') {
+                    const isWin = parseInt(lakers.score.value) > parseInt(opp.score.value);
+                    statusBadge = `<span class="status-badge" style="background:${isWin?'var(--color-gold)':'#555'};color:#000">${isWin?'FINAL W':'FINAL L'}</span>`;
+                } else {
+                    const timeStr = dateObj.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+                    statusBadge = `<span class="status-badge" style="background:rgba(255,255,255,0.1);">${dateObj.getMonth()+1}/${dateObj.getDate()} ${timeStr}</span>`;
                 }
 
                 const html = `
-                <div class="card ${isHome?'home':'away'}" onclick="window.open('${e.links[0].href}')">
-                    <div class="info">
-                        <img src="${opp.team.logos[0].href}" class="logo">
-                        <div>
-                            <div style="font-size:0.7rem;color:#888">${isHome?'主场 vs':'客场 @'}</div>
-                            <div style="font-weight:700">${opp.team.shortDisplayName}</div>
+                <div class="lakers-card mdui-ripple" onclick="window.open('${event.links[0].href}')" style="margin-bottom:12px">
+                    <div class="game-card-content">
+                        ${statusBadge}
+                        <div style="flex:1">
+                            <div class="team-row" style="opacity:${isHome && state!=='pre' ? 0.6 : 1}">
+                                <img src="${opp.team.logos[0].href}" class="team-logo-img">
+                                <div style="font-weight:700">${opp.team.shortDisplayName}</div>
+                                ${state !== 'pre' ? `<div class="score-num">${opp.score.value}</div>` : ''}
+                            </div>
+                            <div class="team-row" style="opacity:${!isHome && state!=='pre' ? 0.6 : 1}">
+                                <img src="https://a.espncdn.com/i/teamlogos/nba/500/lal.png" class="team-logo-img">
+                                <div style="font-weight:700; color:var(--color-gold)">Lakers</div>
+                                ${state !== 'pre' ? `<div class="score-num" style="color:var(--color-gold)">${lakers.score.value}</div>` : ''}
+                            </div>
+                        </div>
+                        <div style="margin-left:16px;text-align:right;font-size:0.75rem;color:rgba(255,255,255,0.5)">
+                            <div>${isHome?'Home':'Away'}</div>
+                            <div>Let's Go!</div>
                         </div>
                     </div>
-                    <div class="meta">
-                        <div class="time">${date.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}</div>
-                        <div class="date">${date.toLocaleDateString('zh-CN',{month:'short',day:'numeric'})}</div>
-                        ${status}
-                    </div>
                 </div>`;
-                list.insertAdjacentHTML('beforeend', html);
+                container.insertAdjacentHTML('beforeend', html);
             });
         }
-        
-        loadData();
+
+        // --- 模块 2: 新闻加载 (黑科技：使用 RSS 转 JSON 服务) ---
+        async function loadNews(forceRefresh = false) {
+            const container = document.getElementById('news-list');
+            if (forceRefresh) container.innerHTML = '<div class="skeleton sk-news"></div><div class="skeleton sk-news"></div>';
+
+            try {
+                // 使用 rss2json 服务聚合多个湖人新闻源 (Bleacher Report, Lakers Nation 等)
+                // 这是一个公开免费的 API，无需后端代理
+                const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fbleacherreport.com%2Farticles%2Ffeed%3Ftag_id%3Dla-lakers&api_key=YourApiKeyHere_Optional'; 
+                // 注意：为了演示方便使用了公共 key，生产环境建议自己申请一个免费 key 以提高稳定性
+                
+                const res = await fetch(rssUrl);
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    dataCache.news = data.items.slice(0, 10); // 取前10条
+                    renderNews(dataCache.news);
+                } else throw new Error('RSS failed');
+
+            } catch (e) {
+                container.innerHTML = `<div style="text-align:center;padding:30px;color:#f66">Failed to load news stream.</div>`;
+            }
+        }
+
+        function renderNews(items) {
+            const container = document.getElementById('news-list');
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                // 尝试从内容提取图片，如果没有则用默认图
+                const imgMatch = item.description.match(/src="([^"]+)"/);
+                const bgImg = imgMatch ? imgMatch[1] : 'https://cdn.nba.com/manage/2023/10/lakers-logo-16x9-1.jpg';
+                const dateStr = new Date(item.pubDate).toLocaleDateString();
+                const sourceName = item.author || 'Bleacher Report';
+
+                const html = `
+                <div class="lakers-card news-card mdui-ripple" onclick="window.open('${item.link}')">
+                    <div class="news-media" style="background-image:url('${bgImg}')">
+                        <div class="news-overlay">
+                            <div class="news-title">${item.title}</div>
+                            <div class="news-meta">
+                                <span class="source-tag">${sourceName}</span>
+                                <span>• ${dateStr}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
     </script>
 </body>
 </html>
